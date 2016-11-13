@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO}, 1);
+        outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
         mRecorderStatus = (TextView) findViewById(R.id.recorderStatus);
         mStartButton = (Button) findViewById(R.id.button1);
         mStartButton.setClickable(true);
@@ -149,8 +150,12 @@ public class MainActivity extends AppCompatActivity {
                     isPermissionGranted = true;
                     mRecorderStatus.setText("Start Recording");
                     mRecorderStatus.setVisibility(View.VISIBLE);
-                    outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
-                    outDir.mkdirs();
+                    if (!outDir.exists()) {
+                        Log.d(TAG, "Creating directory");
+                        outDir.mkdirs();
+                    } else {
+                        Log.d(TAG, "Directory present");
+                    }
                 } else {
                     isPermissionGranted = false;
                     mRecorderStatus.setText("No Permission Granted");
