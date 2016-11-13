@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,10 +25,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView mRecorderStatus;
     private MediaRecorder mMediaRecorder = null;
     private MediaPlayer mMediaPlayer;
+    private File outDir;
     private String outputFile = null;
     private Button mStartButton, mStopButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
+    private boolean isMediaRecorderPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.RECORD_AUDIO}, 1);
         mRecorderStatus = (TextView) findViewById(R.id.recorderStatus);
         mStartButton = (Button) findViewById(R.id.button1);
+        mStartButton.setClickable(true);
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
                         initializeMedia();
                         mMediaRecorder.prepare();
                         mMediaRecorder.start();
+                        mStartButton.setClickable(false);
+                        mStopButton.setClickable(true);
+                        isMediaRecorderPlaying = false;
                         mRecorderStatus.setText("Listening..");
                     } catch (IllegalStateException | IOException e) {
                         e.printStackTrace();
@@ -57,29 +64,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mStopButton = (Button) findViewById(R.id.button2);
+        mStopButton.setClickable(false);
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isPermissionGranted) {
-                    if (mMediaRecorder != null) {
-                        isStopPressed = true;
-                        mMediaRecorder.stop();
-                        mMediaRecorder.release();
-                        mRecorderStatus.setText("Playing..");
-                        mMediaRecorder = null;
-                        try {
-                            mMediaPlayer = new MediaPlayer();
-                            mMediaPlayer.setDataSource(outputFile);
-                            mMediaPlayer.setVolume(7.0f, 7.0f);
-                            mMediaPlayer.prepare();
-                            mMediaPlayer.start();
-                            onMediaPlayerCompletion();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                if (mMediaRecorder != null) {
+                    mMediaRecorder.stop();
+                    mMediaRecorder.release();
+                    mMediaRecorder = null;
+                    isStopPressed = true;
+                    isMediaRecorderPlaying = true;
+                    mRecorderStatus.setText("Playing..");
+                    try {
+                        mMediaPlayer = new MediaPlayer();
+                        mMediaPlayer.setDataSource(outputFile);
+                        mMediaPlayer.setVolume(7.0f, 7.0f);
+                        mMediaPlayer.prepare();
+                        mMediaPlayer.start();
+                        onMediaPlayerCompletion();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } else {
-                    Toast.makeText(MainActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -93,10 +98,6 @@ public class MainActivity extends AppCompatActivity {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
-        } else {
-            mMediaRecorder.stop();
-            mMediaRecorder.release();
-            mMediaRecorder.reset();
         }
     }
 
@@ -104,13 +105,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
+        // If you minimise the app, stop the recorder (Haxxx for now)
+        if (mMediaRecorder != null || isMediaRecorderPlaying) {
+            if (!isStopPressed) {
+                mMediaRecorder.stop();
+                mMediaRecorder.release();
+                mMediaRecorder = null;
+                setOnCompletion();
+            }
+        }
+    }
+
+    private void setOnCompletion() {
+        mStartButton.setClickable(true);
+        mStopButton.setClickable(false);
+        mRecorderStatus.setText("Start Recording");
     }
 
     private void onMediaPlayerCompletion() {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mRecorderStatus.setText("Start Recording");
+                setOnCompletion();
             }
         });
     }
@@ -133,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     isPermissionGranted = true;
                     mRecorderStatus.setText("Start Recording");
                     mRecorderStatus.setVisibility(View.VISIBLE);
+                    outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
+                    outDir.mkdirs();
                 } else {
                     isPermissionGranted = false;
                     mRecorderStatus.setText("No Permission Granted");
