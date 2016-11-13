@@ -5,22 +5,22 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "SoundRecorder";
     private TextView mRecorderStatus;
     private MediaRecorder mMediaRecorder = null;
     private MediaPlayer mMediaPlayer;
@@ -28,25 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private Button mStartButton, mStopButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
-    private final int MEDIA_PLAYING = 1;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MEDIA_PLAYING:
-                    if (mMediaPlayer.isPlaying()) {
-                        mHandler.sendEmptyMessage(MEDIA_PLAYING);
-                    } else {
-                        mRecorderStatus.setText("Start Recording");
-                    }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SoundRecorder", "onCreate");
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -65,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IllegalStateException | IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Toast.makeText(MainActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -85,11 +73,13 @@ public class MainActivity extends AppCompatActivity {
                             mMediaPlayer.setVolume(7.0f, 7.0f);
                             mMediaPlayer.prepare();
                             mMediaPlayer.start();
-                            mHandler.sendEmptyMessage(MEDIA_PLAYING);
+                            onMediaPlayerCompletion();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
+                } else {
+                    Toast.makeText(MainActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -98,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("SoundRecorder", "onDestroy");
+        Log.d(TAG, "onDestroy");
         if (isStopPressed) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
@@ -113,7 +103,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("SoundRecorder", "onStop");
+        Log.d(TAG, "onStop");
+    }
+
+    private void onMediaPlayerCompletion() {
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mRecorderStatus.setText("Start Recording");
+            }
+        });
     }
 
     private void initializeMedia() {
@@ -129,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     isPermissionGranted = true;
                     mRecorderStatus.setText("Start Recording");
                     mRecorderStatus.setVisibility(View.VISIBLE);
