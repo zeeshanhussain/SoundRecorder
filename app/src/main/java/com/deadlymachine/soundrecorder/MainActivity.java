@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeMedia() {
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording.mp3";
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/recording.mp3";
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
