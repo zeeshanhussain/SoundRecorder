@@ -10,8 +10,30 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:gravity="center"
+        android:textStyle="bold"
         android:text="Sound Recorder"
         android:textSize="25dp" />
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="189dp"
+        android:id="@+id/chronometer"
+        android:textSize="40sp"
+        android:fontFamily="sans-serif-light"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="64dp" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/recordProgressBar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:progressDrawable="@drawable/record_progress_bar"
+        android:background="@drawable/record_progress_bar_background"
+        android:layout_marginTop="139dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/recorderStatus"
@@ -19,7 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mainTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="Start"
         android:textSize="15dp"
@@ -31,7 +54,7 @@
         android:layout_height="40dp"
         android:layout_below="@id/mainTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="220dp"
         android:background="@drawable/ic_media_play" />
 
     <Button
@@ -40,7 +63,9 @@
         android:layout_height="40dp"
         android:layout_below="@id/button1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/ic_media_stop" />
+
+
 
 </RelativeLayout>
