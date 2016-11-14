@@ -1,36 +1,47 @@
 package com.deadlymachine.soundrecorder;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "SoundRecorder";
+    private static final SimpleDateFormat mFileFormat = new SimpleDateFormat("yyyy-MM-dd kk.mm.ss", Locale.getDefault());
+    private String mFileName = null;
     private TextView mRecorderStatus;
     private MediaRecorder mMediaRecorder = null;
     private MediaPlayer mMediaPlayer;
+    private Chronometer mChronometer = null;
     private File outDir;
     private String outputFile = null;
     private Button mStartButton, mStopButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
-    private boolean isMediaRecorderPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO}, 1);
         outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
         mRecorderStatus = (TextView) findViewById(R.id.recorderStatus);
         mStartButton = (Button) findViewById(R.id.button1);
         mStartButton.setClickable(true);
@@ -52,9 +64,10 @@ public class MainActivity extends AppCompatActivity {
                         initializeMedia();
                         mMediaRecorder.prepare();
                         mMediaRecorder.start();
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
+                        mChronometer.start();
                         mStartButton.setClickable(false);
                         mStopButton.setClickable(true);
-                        isMediaRecorderPlaying = false;
                         mRecorderStatus.setText("Listening..");
                     } catch (IllegalStateException | IOException e) {
                         e.printStackTrace();
@@ -74,21 +87,23 @@ public class MainActivity extends AppCompatActivity {
                     mMediaRecorder.release();
                     mMediaRecorder = null;
                     isStopPressed = true;
-                    isMediaRecorderPlaying = true;
                     mRecorderStatus.setText("Playing..");
                     try {
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
                         mMediaPlayer = new MediaPlayer();
                         mMediaPlayer.setDataSource(outputFile);
                         mMediaPlayer.setVolume(7.0f, 7.0f);
                         mMediaPlayer.prepare();
                         mMediaPlayer.start();
                         onMediaPlayerCompletion();
-                    } catch (IOException e) {
+                    } catch (IOException | IllegalStateException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
+
     }
 
     @Override
@@ -107,13 +122,43 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "onStop");
         // If you minimise the app, stop the recorder (Haxxx for now)
-        if (mMediaRecorder != null || isMediaRecorderPlaying) {
-            if (!isStopPressed) {
-                mMediaRecorder.stop();
-                mMediaRecorder.release();
-                mMediaRecorder = null;
-                setOnCompletion();
-            }
+        if (mMediaRecorder != null || !isStopPressed) {
+            mMediaRecorder.stop();
+            mChronometer.stop();
+            mChronometer.setBase(SystemClock.elapsedRealtime());
+            mMediaRecorder.release();
+            mMediaRecorder = null;
+            setOnCompletion();
+        }
+
+    }
+
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("SoundRecorder")
+                .setMessage("Do you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        MainActivity.super.onBackPressed();
+                    }
+                }).create().show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                Toast.makeText(this, "WIP", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -133,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeMedia() {
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/recording.mp3";
+        mFileName = mFileFormat.format(new Date()) + ".mp3";
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
