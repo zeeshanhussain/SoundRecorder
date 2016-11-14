@@ -5,3 +5,7 @@ app/build/
 *.iml
 *.apk
 local.properties
+<<<<<<< HEAD
+=======
+gradle.properties
+>>>>>>> dbccdfd6a8b8d44ac612a97184a89c0aa5a37ab7

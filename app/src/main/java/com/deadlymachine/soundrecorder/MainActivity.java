@@ -2,7 +2,7 @@ package com.deadlymachine.soundrecorder;
 
 import android.Manifest;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -21,15 +21,14 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.app.AlertDialog;
 
 import java.util.Date;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
     private String mFileName = null;
     private TextView mRecorderStatus;
     private MediaRecorder mMediaRecorder = null;
-    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer = null;
     private Chronometer mChronometer = null;
     private File outDir;
     private String outputFile = null;
     private Button mStartButton, mStopButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
-    private boolean isMediaRecorderPlaying = false;
+    private boolean isMediaRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         mRecorderStatus = (TextView) findViewById(R.id.recorderStatus);
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
         mStartButton = (Button) findViewById(R.id.button1);
         mStartButton.setClickable(true);
         mStartButton.setOnClickListener(new View.OnClickListener() {
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
                         mChronometer.start();
                         mStartButton.setClickable(false);
                         mStopButton.setClickable(true);
-                        isMediaRecorderPlaying = false;
-                        mRecorderStatus.setText("Listening..");
-                    } catch (IllegalStateException | IOException e) {
+                        isMediaRecording = true;
+                        mRecorderStatus.setText("Listening");
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -99,16 +99,18 @@ public class MainActivity extends AppCompatActivity {
                     mMediaRecorder.release();
                     mMediaRecorder = null;
                     isStopPressed = true;
-                    isMediaRecorderPlaying = true;
-                    mRecorderStatus.setText("Playing..");
+                    isMediaRecording = false;
+                    mRecorderStatus.setText("Playing");
                     try {
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
                         mMediaPlayer = new MediaPlayer();
                         mMediaPlayer.setDataSource(outputFile);
                         mMediaPlayer.setVolume(7.0f, 7.0f);
                         mMediaPlayer.prepare();
                         mMediaPlayer.start();
                         onMediaPlayerCompletion();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "onStop");
         // If you minimise the app, stop the recorder (Haxxx for now)
-        if (mMediaRecorder != null || isMediaRecorderPlaying) {
+        if (mMediaRecorder != null || isMediaRecording) {
             if (!isStopPressed) {
                 mMediaRecorder.stop();
                 mChronometer.stop();
@@ -159,26 +161,26 @@ public class MainActivity extends AppCompatActivity {
                 }).create().show();
     }
 
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.about:
-                Toast.makeText(this, "Currently Wip!", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-
+    public boolean onOptionsItemSelected(MenuItem item){
+            switch (item.getItemId()) {
+                case R.id.about:
+                    Toast.makeText(this, "WIP", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
         }
-
-    }
 
 
     private void setOnCompletion() {
@@ -214,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                         && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     isPermissionGranted = true;
                     mRecorderStatus.setText("Start Recording");
-                    mRecorderStatus.setVisibility(View.VISIBLE);
                     if (!outDir.exists()) {
                         Log.d(TAG, "Creating directory");
                         outDir.mkdirs();
@@ -225,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
                     isPermissionGranted = false;
                     mRecorderStatus.setText("No Permission Granted");
                     mRecorderStatus.setTextColor(Color.RED);
-                    mRecorderStatus.setVisibility(View.VISIBLE);
                 }
                 break;
         }
