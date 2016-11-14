@@ -1,10 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".SoundRecorderActivity">
+
+    <item
+        android:id="@+id/viewRecording"
+        android:orderInCategory="100"
+        android:title="List all Recordings"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/about"
+        android:orderInCategory="200"
         android:title="About Developer"
-        android:orderInCategory="100"
         app:showAsAction="never" />
-   </menu>
+
+</menu>

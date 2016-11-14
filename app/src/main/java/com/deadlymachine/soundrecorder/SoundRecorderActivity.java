@@ -12,6 +12,8 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,14 +24,18 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.deadlymachine.soundrecorder.fragments.RecordingsFragment;
+import com.deadlymachine.soundrecorder.interfaces.BackHandlerInterface;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class SoundRecorderActivity extends AppCompatActivity implements BackHandlerInterface {
 
     private static final String TAG = "SoundRecorder";
+    private RecordingsFragment mRecordingsFragment;
     private static final SimpleDateFormat mFileFormat = new SimpleDateFormat("yyyy-MM-dd kk.mm.ss", Locale.getDefault());
     private String mFileName = null;
     private TextView mRecorderStatus;
@@ -47,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        setContentView(R.layout.activity_main);
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+        setContentView(R.layout.activity_soundrecorder);
+        ActivityCompat.requestPermissions(SoundRecorderActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO}, 1);
         outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
@@ -74,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(MainActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SoundRecorderActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -135,16 +141,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle("SoundRecorder")
-                .setMessage("Do you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        MainActivity.super.onBackPressed();
-                    }
-                }).create().show();
+        if (mRecordingsFragment != null && !mRecordingsFragment.onBackPressed()) {
+            super.onBackPressed();
+            mRecordingsFragment = null;
+        } else {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("SoundRecorder");
+            alertDialog.setMessage("Do you want to exit?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SoundRecorderActivity.super.onBackPressed();
+                }
+            });
+            alertDialog.setNegativeButton("No", null);
+            alertDialog.create().show();
+        }
     }
 
     @Override
@@ -159,6 +173,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.about:
                 Toast.makeText(this, "WIP", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.viewRecording:
+                if (isPermissionGranted) {
+                    RecordingsFragment recordingsFragment = new RecordingsFragment();
+                    showFragment(recordingsFragment, "recordingsFragment");
+                } else {
+                    Toast.makeText(SoundRecorderActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -210,5 +231,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    public void showFragment(Fragment fragment, String Tag) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.recorderActivity, fragment, Tag);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    @Override
+    public void setSelectedFragment(RecordingsFragment fragment) {
+        this.mRecordingsFragment = fragment;
     }
 }
