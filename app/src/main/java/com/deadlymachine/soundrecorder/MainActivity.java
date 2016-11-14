@@ -3,6 +3,7 @@ package com.deadlymachine.soundrecorder;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -196,6 +197,11 @@ public class MainActivity extends AppCompatActivity {
                 setOnCompletion();
             }
         });
+    }
+
+    public void save(View v) {
+        Intent intent = new Intent(MainActivity.this,Listfiles.class);
+        startActivity(intent);
     }
 
     private void initializeMedia() {
