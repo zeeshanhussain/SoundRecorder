@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         mStopButton.setClickable(true);
                         isMediaRecording = true;
                         mRecorderStatus.setText("Listening..");
-                    } catch (IllegalStateException | IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         mMediaPlayer.prepare();
                         mMediaPlayer.start();
                         onMediaPlayerCompletion();
-                    } catch (IOException | IllegalStateException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
