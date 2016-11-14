@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mStartButton, mStopButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
+    private boolean isMediaRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         mChronometer.start();
                         mStartButton.setClickable(false);
                         mStopButton.setClickable(true);
+                        isMediaRecording = true;
                         mRecorderStatus.setText("Listening..");
                     } catch (IllegalStateException | IOException e) {
                         e.printStackTrace();
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     mMediaRecorder.release();
                     mMediaRecorder = null;
                     isStopPressed = true;
+                    isMediaRecording = false;
                     mRecorderStatus.setText("Playing..");
                     try {
                         mChronometer.stop();
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "onStop");
         // If you minimise the app, stop the recorder (Haxxx for now)
-        if (mMediaRecorder != null || !isStopPressed) {
+        if (mMediaRecorder != null || !isStopPressed || isMediaRecording) {
             mMediaRecorder.stop();
             mChronometer.stop();
             mChronometer.setBase(SystemClock.elapsedRealtime());
