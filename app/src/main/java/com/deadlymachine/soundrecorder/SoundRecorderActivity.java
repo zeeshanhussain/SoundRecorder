@@ -157,7 +157,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                 }
             });
             alertDialog.setNegativeButton("No", null);
-            alertDialog.create().show();
+            alertDialog.show();
         }
     }
 
