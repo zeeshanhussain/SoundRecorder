@@ -73,7 +73,8 @@ public class RecordingsFragment extends Fragment {
                             case 1:
                                 File file = new File(name);
                                 boolean deleted = file.delete();
-                                Log.d(TAG, "File Path: " + name + ", Deleted:" + String.valueOf(deleted));
+                                Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
+                                break;
                         }
                     }
                 });
