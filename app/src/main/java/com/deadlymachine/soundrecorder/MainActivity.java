@@ -176,7 +176,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
             switch (item.getItemId()) {
                 case R.id.about:
-                    Toast.makeText(this, "WIP", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this,about_me.class);
+                    startActivity(intent);
                     return true;
                 default:
                     return super.onOptionsItemSelected(item);
