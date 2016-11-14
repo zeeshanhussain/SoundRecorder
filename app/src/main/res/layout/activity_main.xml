@@ -10,30 +10,27 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:textStyle="bold"
         android:text="Sound Recorder"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:textStyle="bold" />
 
     <Chronometer
+        android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="189dp"
-        android:id="@+id/chronometer"
-        android:textSize="40sp"
-        android:fontFamily="sans-serif-light"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="64dp" />
+        android:layout_marginBottom="64dp"
+        android:layout_marginTop="189dp"
+        android:fontFamily="sans-serif-light"
+        android:textSize="40sp" />
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
+    <ImageView
         android:id="@+id/recordProgressBar"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:progressDrawable="@drawable/record_progress_bar"
-        android:background="@drawable/record_progress_bar_background"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="139dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:background="@drawable/circle_stroke" />
 
     <TextView
         android:id="@+id/recorderStatus"
@@ -41,11 +38,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mainTextView"
         android:layout_centerHorizontal="true"
-        android:textStyle="bold"
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="Start"
         android:textSize="15dp"
+        android:textStyle="bold"
         android:visibility="gone" />
 
     <Button

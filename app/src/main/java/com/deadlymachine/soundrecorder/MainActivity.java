@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String mFileName = null;
     private TextView mRecorderStatus;
     private MediaRecorder mMediaRecorder = null;
-    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer = null;
     private Chronometer mChronometer = null;
     private File outDir;
     private String outputFile = null;
@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override
