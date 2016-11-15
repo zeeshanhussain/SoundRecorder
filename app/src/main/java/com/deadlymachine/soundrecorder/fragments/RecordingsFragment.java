@@ -59,7 +59,7 @@ public class RecordingsFragment extends Fragment {
         mListView.setAdapter(mArrayAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 final String name = parent.getItemAtPosition(position).toString();
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 alertDialog.setTitle("Options");
@@ -73,6 +73,8 @@ public class RecordingsFragment extends Fragment {
                             case 1:
                                 File file = new File(name);
                                 boolean deleted = file.delete();
+                                mArrayList.remove(position);
+                                mArrayAdapter.notifyDataSetChanged();
                                 Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
                                 break;
                         }
