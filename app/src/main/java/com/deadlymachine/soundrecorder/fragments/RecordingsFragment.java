@@ -2,6 +2,7 @@ package com.deadlymachine.soundrecorder.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class RecordingsFragment extends Fragment {
     private ArrayList mArrayList = new ArrayList();
     private Collection<File> recordingCollection = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
     private ArrayAdapter<String> mArrayAdapter;
-    private CharSequence options[] = new CharSequence[] {"Play", "Delete"};
+    private CharSequence options[] = new CharSequence[] {"Play", "Delete","Share"};
     private boolean isMediaPlaying = false;
 
     @Nullable
@@ -77,7 +78,12 @@ public class RecordingsFragment extends Fragment {
                                 mArrayAdapter.notifyDataSetChanged();
                                 Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
                                 break;
-                        }
+                            case 2:
+                                Intent shareIntent = new Intent();
+                                shareIntent.setAction(Intent.ACTION_SEND);
+                                shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse("file:///"+name));
+                                shareIntent.setType("audio/mp3");
+                                startActivity(Intent.createChooser(shareIntent, "Share audio File"));                        }
                     }
                 });
                 alertDialog.show();
