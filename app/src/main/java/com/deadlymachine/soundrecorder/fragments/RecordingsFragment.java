@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
 /**
  * Created by men_in_black007 on 14/11/16.
  */
@@ -72,11 +73,21 @@ public class RecordingsFragment extends Fragment {
                                 mStartMedia(name);
                                 break;
                             case 1:
-                                File file = new File(name);
-                                boolean deleted = file.delete();
-                                mArrayList.remove(position);
-                                mArrayAdapter.notifyDataSetChanged();
-                                Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                                alertDialog.setTitle("Delete Recording");
+                                alertDialog.setMessage("Do you want to Delete this Recording?");
+                                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                File file = new File(name);
+                                                boolean deleted = file.delete();
+                                                mArrayList.remove(position);
+                                                mArrayAdapter.notifyDataSetChanged();
+                                                Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
+                                            }
+                                });
+                                alertDialog.setNegativeButton("No", null);
+                                alertDialog.show();
                                 break;
                             case 2:
                                 Intent shareIntent = new Intent();
