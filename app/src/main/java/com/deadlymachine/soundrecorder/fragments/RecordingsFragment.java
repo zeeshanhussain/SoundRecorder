@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ public class RecordingsFragment extends Fragment {
     private ArrayList mArrayList = new ArrayList();
     private Collection<File> recordingCollection = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
     private ArrayAdapter<String> mArrayAdapter;
-    private CharSequence options[] = new CharSequence[] {"Play", "Delete","Share"};
+    private CharSequence options[] = new CharSequence[] {"Play", "Rename","Delete","Share"};
     private boolean isMediaPlaying = false;
 
     @Nullable
@@ -73,6 +74,9 @@ public class RecordingsFragment extends Fragment {
                                 mStartMedia(name);
                                 break;
                             case 1:
+                                showRenameDialog(name);
+                                break;
+                            case 2:
                                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                                 alertDialog.setTitle("Delete Recording");
                                 alertDialog.setMessage("Do you want to Delete this Recording?");
@@ -89,7 +93,7 @@ public class RecordingsFragment extends Fragment {
                                 alertDialog.setNegativeButton("No", null);
                                 alertDialog.show();
                                 break;
-                            case 2:
+                            case 3:
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse("file:///"+name));
@@ -131,6 +135,39 @@ public class RecordingsFragment extends Fragment {
                 mMediaPlayer.release();
             }
         });
+    }
+
+    public void showRenameDialog(final String name) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = this.getActivity().getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.rename_recording, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText newFileName = (EditText) dialogView.findViewById(R.id.newFileName);
+
+        dialogBuilder.setTitle("Rename");
+        dialogBuilder.setMessage("Enter new file name");
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String oldName=name.substring(34,name.length());
+                String newName=newFileName.getText().toString()+".mp3";
+                Log.d("RecordingsFragment",oldName+" "+newName);
+                renameFile(oldName,newName);
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", null);
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
+    public static void renameFile(String oldName,String newName){
+        File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
+        if(dir.exists()){
+            File from = new File(dir,oldName);
+            File to = new File(dir,newName);
+            if(from.exists())
+                from.renameTo(to);
+        }
     }
 
     public boolean onBackPressed() {
