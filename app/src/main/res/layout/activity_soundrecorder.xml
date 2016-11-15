@@ -52,20 +52,29 @@
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="70dp"
-            android:layout_marginTop="200dp"
-            android:background="@drawable/ic_play" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="220dp"
+            android:background="@drawable/ic_record" />
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="70dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="220dp"
             android:background="@drawable/ic_stop" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="240dp"
+            android:background="@drawable/ic_play"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
