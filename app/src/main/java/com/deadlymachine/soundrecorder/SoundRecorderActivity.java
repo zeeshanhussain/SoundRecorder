@@ -129,7 +129,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        if (isStopPressed) {
+        if (mMediaPlayer != null && isStopPressed) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
