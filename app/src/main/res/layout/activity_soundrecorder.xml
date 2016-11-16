@@ -2,81 +2,83 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/recorderActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/mainTextView"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="Sound Recorder"
-        android:textSize="25dp"
-        android:textStyle="bold"
-        android:paddingBottom="20dp"/>
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        >
-
-        <ImageView
-            android:id="@+id/recordProgressBar"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/circle_stroke" />
+        android:layout_height="450dp"
+        android:layout_centerInParent="true">
 
         <TextView
-            android:id="@+id/recorderStatus"
-            android:layout_width="200dp"
+            android:id="@+id/mainTextView"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
             android:gravity="center"
-            android:text="Start Recording"
-            android:textSize="15dp"
+            android:text="Sound Recorder"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
-        <Chronometer
-            android:id="@+id/chronometer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="70dp"
-            android:fontFamily="sans-serif-light"
-            android:textSize="90sp" />
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_centerInParent="true">
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="220dp"
-            android:background="@drawable/ic_record" />
+            <ImageView
+                android:id="@+id/recordProgressBar"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle_stroke" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="220dp"
-            android:background="@drawable/ic_stop" />
+            <TextView
+                android:id="@+id/recorderStatus"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:gravity="center"
+                android:text="Start Recording"
+                android:textSize="15dp"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="240dp"
-            android:background="@drawable/ic_play"
-            android:visibility="gone"/>
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="70dp"
+                android:fontFamily="sans-serif-light"
+                android:textSize="90sp" />
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="220dp"
+                android:background="@drawable/ic_record" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="60dp"
+                android:layout_marginTop="220dp"
+                android:background="@drawable/ic_stop" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="240dp"
+                android:background="@drawable/ic_play"
+                android:visibility="gone" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

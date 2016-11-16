@@ -6,7 +6,7 @@
     <item
         android:id="@+id/viewRecording"
         android:orderInCategory="100"
-        android:title="List all Recordings"
+        android:title="Saved Recordings"
         app:showAsAction="never" />
 
     <item
