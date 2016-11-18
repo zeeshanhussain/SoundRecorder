@@ -72,21 +72,20 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         mRecordButton = (Button) findViewById(R.id.button1);
         mStopButton = (Button) findViewById(R.id.button2);
         mPlayButton = (Button) findViewById(R.id.button3);
+        final Intent intent = new Intent(SoundRecorderActivity.this, RecorderService.class);
         mRecordButton.setClickable(true);
         mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isPermissionGranted) {
                     try {
-                        initializeMedia();
-                        mMediaRecorder.prepare();
-                        mMediaRecorder.start();
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.start();
                         mRecordButton.setClickable(false);
                         mStopButton.setClickable(true);
                         mPlayButton.setVisibility(View.GONE);
                         isMediaRecording = true;
+                        SoundRecorderActivity.this.startService(intent);
                         mRecorderStatus.setText("Listening");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -102,13 +101,13 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
             public void onClick(View v) {
                 if (mMediaRecorder != null) {
                     try {
-                        mMediaRecorder.stop();
+                        stopService(intent);
                         mChronometer.stop();
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
                     }
-                    mMediaRecorder.release();
+                    stopService(intent);
                     mMediaRecorder = null;
                     isStopPressed = true;
                     isMediaRecording = false;
@@ -144,32 +143,32 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-        if (mMediaPlayer != null && isStopPressed) {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-        }
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        Log.d(TAG, "onDestroy");
+//        if (mMediaPlayer != null && isStopPressed) {
+//            mMediaPlayer.stop();
+//            mMediaPlayer.reset();
+//            mMediaPlayer.release();
+//        }
+//    }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
         // If you minimise the app, stop the recorder (Haxxx for now)
-        if (mMediaRecorder != null || isMediaRecording) {
-            if (!isStopPressed) {
-                mMediaRecorder.stop();
-                mChronometer.stop();
-                mChronometer.setBase(SystemClock.elapsedRealtime());
-                mMediaRecorder.release();
-                mMediaRecorder = null;
-                setOnCompletion();
-            }
-        }
+//        if (mMediaRecorder != null || isMediaRecording) {
+//            if (!isStopPressed) {
+//                mMediaRecorder.stop();
+//                mChronometer.stop();
+//                mChronometer.setBase(SystemClock.elapsedRealtime());
+//                mMediaRecorder.release();
+//                mMediaRecorder = null;
+//                setOnCompletion();
+//            }
+//        }
 
     }
 
@@ -237,15 +236,15 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
     }
 
 
-    private void initializeMedia() {
-        mFileName = mFileFormat.format(new Date()) + ".mp3";
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
-        mMediaRecorder = new MediaRecorder();
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mMediaRecorder.setOutputFile(outputFile);
-    }
+//    private void initializeMedia() {
+//        mFileName = mFileFormat.format(new Date()) + ".mp3";
+//        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
+//        mMediaRecorder = new MediaRecorder();
+//        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+//        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//        mMediaRecorder.setOutputFile(outputFile);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
