@@ -197,8 +197,12 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                 return true;
             case R.id.viewRecording:
                 if (isPermissionGranted) {
-                    RecordingsFragment recordingsFragment = new RecordingsFragment();
-                    showFragment(recordingsFragment, "recordingsFragment");
+                    if (mRecordingsFragment == null || !mRecordingsFragment.isFragmentOpened()) {
+                        RecordingsFragment recordingsFragment = new RecordingsFragment();
+                        showFragment(recordingsFragment, "recordingsFragment");
+                    } else {
+                        Toast.makeText(SoundRecorderActivity.this, "You are already there", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(SoundRecorderActivity.this, "No Permissions Granted", Toast.LENGTH_SHORT).show();
                 }
