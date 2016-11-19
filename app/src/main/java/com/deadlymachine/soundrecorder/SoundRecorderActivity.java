@@ -81,7 +81,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                     try {
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.start();
-                        mRecordButton.setClickable(false);
+                        mRecordButton.setClickable(true);
                         mStopButton.setClickable(true);
                         mPlayButton.setVisibility(View.GONE);
                         isMediaRecording = true;
@@ -100,6 +100,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
             @Override
             public void onClick(View v) {
                     stopService(intent);
+                    mMediaRecorder = null;
                     isStopPressed = true;
                     isMediaRecording = false;
                     mChronometer.stop();
