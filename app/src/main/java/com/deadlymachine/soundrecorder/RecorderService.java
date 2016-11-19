@@ -26,8 +26,8 @@ import java.util.TimerTask;
 
 public class RecorderService extends Service {
 
-    private MediaRecorder mMediaRecorder = null;
     private static final SimpleDateFormat mFileFormat = new SimpleDateFormat("yyyy-MM-dd kk.mm.ss", Locale.getDefault());
+    private MediaRecorder mMediaRecorder = null;
     private String mFileName = null;
     private String outputFile = null;
     private long mStartingTimeMillis = 0;
@@ -42,10 +42,6 @@ public class RecorderService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    public interface OnTimerChangedListener {
-        void onTimerChanged(int seconds);
     }
 
     @Override
@@ -70,32 +66,21 @@ public class RecorderService extends Service {
 
     public void startRecording() {
 
-        mFileName = mFileFormat.format(new Date()) + ".mp3";
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
-        mMediaRecorder = new MediaRecorder();
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mMediaRecorder.setOutputFile(outputFile);
-
         try {
-            mMediaRecorder.prepare();
-            mMediaRecorder.start();
+
             startForeground(1, createNotification());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
     public void stopRecording() {
-        mMediaRecorder.stop();
-        mElapsedMillis = (System.currentTimeMillis() - mStartingTimeMillis);
-        mMediaRecorder.release();
+
         if (mIncrementTimerTask != null) {
             mIncrementTimerTask.cancel();
             mIncrementTimerTask = null;
         }
-        mMediaRecorder = null;
         startForeground(0,createNotification());
 
 
@@ -113,6 +98,10 @@ public class RecorderService extends Service {
                 new Intent[]{new Intent(getApplicationContext(), SoundRecorderActivity.class)}, 0));
 
         return mBuilder.build();
+    }
+
+    public interface OnTimerChangedListener {
+        void onTimerChanged(int seconds);
     }
 
     }

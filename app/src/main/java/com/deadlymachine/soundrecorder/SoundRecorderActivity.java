@@ -79,6 +79,14 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
             public void onClick(View v) {
                 if (isPermissionGranted) {
                     try {
+                        initializeMedia();
+                        mMediaRecorder = new MediaRecorder();
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+                        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                        mMediaRecorder.setOutputFile(outputFile);
+                        mMediaRecorder.prepare();
+                        mMediaRecorder.start();
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.start();
                         mRecordButton.setClickable(true);
@@ -99,6 +107,8 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                    mMediaRecorder.stop();
+                    mMediaRecorder.release();
                     stopService(intent);
                     mMediaRecorder = null;
                     isStopPressed = true;
@@ -110,6 +120,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
 
             }
         });
+
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +173,10 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
 //            }
 //        }
 
+    }
+    public void file(){
+        mFileName = mFileFormat.format(new Date()) + ".mp3";
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
     }
 
     @Override
@@ -228,15 +243,15 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
     }
 
 
-//    private void initializeMedia() {
-//        mFileName = mFileFormat.format(new Date()) + ".mp3";
-//        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
-//        mMediaRecorder = new MediaRecorder();
-//        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-//        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-//        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-//        mMediaRecorder.setOutputFile(outputFile);
-//    }
+    private void initializeMedia() {
+        mFileName = mFileFormat.format(new Date()) + ".mp3";
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
+        mMediaRecorder = new MediaRecorder();
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mMediaRecorder.setOutputFile(outputFile);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
