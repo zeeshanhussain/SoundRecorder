@@ -99,23 +99,14 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMediaRecorder != null) {
-                    try {
-                        stopService(intent);
-                        mChronometer.stop();
-                        mChronometer.setBase(SystemClock.elapsedRealtime());
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    }
                     stopService(intent);
-                    mMediaRecorder = null;
                     isStopPressed = true;
                     isMediaRecording = false;
                     mChronometer.stop();
                     mChronometer.setBase(SystemClock.elapsedRealtime());
                     mRecorderStatus.setText("Stopped");
                     mPlayButton.setVisibility(View.VISIBLE);
-                }
+
             }
         });
         mPlayButton.setOnClickListener(new View.OnClickListener() {
