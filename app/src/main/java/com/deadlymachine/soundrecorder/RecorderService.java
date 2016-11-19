@@ -106,6 +106,7 @@ public class RecorderService extends Service {
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.drawable.ic_play)
                         .setContentTitle(getString(R.string.notification_recording))
+                        .setUsesChronometer(true)
                         .setOngoing(true);
 
         mBuilder.setContentIntent(PendingIntent.getActivities(getApplicationContext(), 0,
