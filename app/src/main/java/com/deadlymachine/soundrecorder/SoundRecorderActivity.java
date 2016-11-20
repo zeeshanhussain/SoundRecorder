@@ -79,16 +79,11 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                 if (isPermissionGranted) {
                     try {
                         initializeMedia();
-                        mMediaRecorder = new MediaRecorder();
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-                        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                        mMediaRecorder.setOutputFile(outputFile);
                         mMediaRecorder.prepare();
                         mMediaRecorder.start();
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.start();
-                        mRecordButton.setClickable(true);
+                        mRecordButton.setClickable(false);
                         mStopButton.setClickable(true);
                         mPlayButton.setVisibility(View.GONE);
                         isMediaRecording = true;
@@ -106,20 +101,27 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaRecorder.stop();
-                mMediaRecorder.release();
-                stopService(intent);
-                mMediaRecorder = null;
-                isStopPressed = true;
-                isMediaRecording = false;
-                mChronometer.stop();
-                mChronometer.setBase(SystemClock.elapsedRealtime());
-                mRecorderStatus.setText("Stopped");
-                mPlayButton.setVisibility(View.VISIBLE);
-
+                if (mMediaRecorder != null) {
+                    try {
+                        mMediaRecorder.stop();
+                        stopService(intent);
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                    mMediaRecorder.release();
+                    mMediaRecorder = null;
+                    isStopPressed = true;
+                    isMediaRecording = false;
+                    stopService(intent);
+                    mChronometer.stop();
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    mRecorderStatus.setText("Stopped");
+                    mPlayButton.setVisibility(View.VISIBLE);
+                }
             }
         });
-
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +163,7 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         super.onStop();
         Log.d(TAG, "onStop");
     }
+
     @Override
     public void onBackPressed() {
         if (mRecordingsFragment != null && !mRecordingsFragment.onBackPressed()) {
