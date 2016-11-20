@@ -42,6 +42,7 @@ public class RecordingsFragment extends Fragment {
     private ArrayList mArrayList = new ArrayList();
     private Collection<File> recordingCollection = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
     private ArrayAdapter<String> mArrayAdapter;
+    private ListView mListView;
     private CharSequence options[] = new CharSequence[]{"Play", "Rename", "Delete", "Share"};
     private boolean isMediaPlaying = false;
     private boolean isFragmentOpened = false;
@@ -58,7 +59,7 @@ public class RecordingsFragment extends Fragment {
         setFragmentOpened(true);
         mBackHandlerInterface = (BackHandlerInterface) getActivity();
         mBackHandlerInterface.setSelectedFragment(this);
-        final ListView mListView = (ListView) view.findViewById(R.id.listView);
+        mListView = (ListView) view.findViewById(R.id.listView);
         mArrayList.addAll(recordingCollection);
         mArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, mArrayList);
         mListView.setAdapter(mArrayAdapter);
@@ -156,6 +157,7 @@ public class RecordingsFragment extends Fragment {
                 String newName = newFileName.getText().toString() + ".mp3";
                 Log.d("RecordingsFragment", oldName + " " + newName);
                 renameFile(oldName, newName);
+                updateList();
             }
         });
         dialogBuilder.setNegativeButton("Cancel", null);
@@ -171,6 +173,15 @@ public class RecordingsFragment extends Fragment {
             if (from.exists())
                 from.renameTo(to);
         }
+    }
+
+    private void updateList() {
+        // Haxx
+        mArrayAdapter.clear();
+        Collection<File> recordingCollections = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
+        mArrayList.addAll(recordingCollections);
+        mArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, mArrayList);
+        mListView.setAdapter(mArrayAdapter);
     }
 
     public boolean onBackPressed() {
