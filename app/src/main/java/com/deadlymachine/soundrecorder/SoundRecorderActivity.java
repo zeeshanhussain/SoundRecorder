@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -107,16 +106,16 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    mMediaRecorder.stop();
-                    mMediaRecorder.release();
-                    stopService(intent);
-                    mMediaRecorder = null;
-                    isStopPressed = true;
-                    isMediaRecording = false;
-                    mChronometer.stop();
-                    mChronometer.setBase(SystemClock.elapsedRealtime());
-                    mRecorderStatus.setText("Stopped");
-                    mPlayButton.setVisibility(View.VISIBLE);
+                mMediaRecorder.stop();
+                mMediaRecorder.release();
+                stopService(intent);
+                mMediaRecorder = null;
+                isStopPressed = true;
+                isMediaRecording = false;
+                mChronometer.stop();
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                mRecorderStatus.setText("Stopped");
+                mPlayButton.setVisibility(View.VISIBLE);
 
             }
         });
@@ -146,39 +145,22 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
 
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Log.d(TAG, "onDestroy");
-//        if (mMediaPlayer != null && isStopPressed) {
-//            mMediaPlayer.stop();
-//            mMediaPlayer.reset();
-//            mMediaPlayer.release();
-//        }
-//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        if (mMediaPlayer != null && isStopPressed) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+        }
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop");
-        // If you minimise the app, stop the recorder (Haxxx for now)
-//        if (mMediaRecorder != null || isMediaRecording) {
-//            if (!isStopPressed) {
-//                mMediaRecorder.stop();
-//                mChronometer.stop();
-//                mChronometer.setBase(SystemClock.elapsedRealtime());
-//                mMediaRecorder.release();
-//                mMediaRecorder = null;
-//                setOnCompletion();
-//            }
-//        }
-
     }
-    public void file(){
-        mFileName = mFileFormat.format(new Date()) + ".mp3";
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SoundRecorder/" + mFileName;
-    }
-
     @Override
     public void onBackPressed() {
         if (mRecordingsFragment != null && !mRecordingsFragment.onBackPressed()) {
