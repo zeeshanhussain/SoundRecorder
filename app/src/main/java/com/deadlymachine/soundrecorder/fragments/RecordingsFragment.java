@@ -27,6 +27,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 
 /**
@@ -61,6 +62,7 @@ public class RecordingsFragment extends Fragment {
         mBackHandlerInterface.setSelectedFragment(this);
         mListView = (ListView) view.findViewById(R.id.listView);
         mArrayList.addAll(recordingCollection);
+        Collections.sort(mArrayList);
         mArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, mArrayList);
         mListView.setAdapter(mArrayAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -180,6 +182,7 @@ public class RecordingsFragment extends Fragment {
         mArrayAdapter.clear();
         Collection<File> recordingCollections = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
         mArrayList.addAll(recordingCollections);
+        Collections.sort(mArrayList);
         mArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, mArrayList);
         mListView.setAdapter(mArrayAdapter);
     }
