@@ -24,6 +24,7 @@
             android:layout_height="400dp"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
+            android:fastScrollEnabled="true"
             android:layout_below="@+id/textView2" />
 
     </RelativeLayout>
