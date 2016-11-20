@@ -141,7 +141,7 @@ public class RecordingsFragment extends Fragment {
         });
     }
 
-    public void showRenameDialog(final String name) {
+    private void showRenameDialog(final String name) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getActivity().getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.rename_recording, null);
@@ -165,7 +165,7 @@ public class RecordingsFragment extends Fragment {
         b.show();
     }
 
-    public static void renameFile(String oldName, String newName) {
+    private void renameFile(String oldName, String newName) {
         File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
         if (dir.exists()) {
             File from = new File(dir, oldName);
